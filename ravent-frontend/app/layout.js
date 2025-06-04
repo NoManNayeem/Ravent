@@ -1,0 +1,45 @@
+// app/layout.js
+
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata = {
+  title: "RavenT",
+  description: "RavenT Frontend for the Ravent agentic RAG platform",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+
+          {/* 
+            Add pt-16 so the main content starts below the 4rem‐high navbar 
+            Add pb-8 so there's breathing room above the footer
+          */}
+          <main className="mt-8">
+            {children}
+          </main>
+
+          <Footer />
+        </div>
+      </body>
+    </html>
+  );
+}
