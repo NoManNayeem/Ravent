@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+:root {
+  --color-primary: #4f46e5;
+  --color-secondary: #6366f1;
+  --color-accent: #f472b6;
+  --color-bg: #f9fafb;
+  --color-text: #1f2937;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out both;
+}
+
+/* Optional: smooth-scroll for anchor links */
+html {
+  scroll-behavior: smooth;
+}

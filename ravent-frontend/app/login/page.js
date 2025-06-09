@@ -8,7 +8,7 @@ import Link from "next/link";
 import { HiOutlineLogin } from "react-icons/hi";
 import api from "../../lib/api";
 
-export default function LoginPage() {
+export default function LoginPage({ className = "" }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,18 +21,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/accounts/login/", {
-        username,
-        password,
-      });
-      // Store tokens and username
+      const { data } = await api.post("/accounts/login/", { username, password });
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
       localStorage.setItem("username", username);
-
-      // Optional: verify profile to confirm token is valid
       await api.get("/accounts/profile/");
-
       router.push("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
@@ -47,65 +40,70 @@ export default function LoginPage() {
   };
 
   return (
-    <section className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-50 py-24 min-h-[calc(100vh-64px)]">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 transform transition-transform hover:-translate-y-1">
+    <section
+      className={
+        `flex items-center justify-center
+         bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)]
+         text-[var(--color-text)]
+         py-24
+         min-h-[calc(100vh-64px)]
+         animate-fadeIn
+         ${className}`
+      }
+    >
+      <div className="w-full max-w-md bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 transform transition-transform hover:-translate-y-1">
         <div className="flex flex-col items-center mb-6">
-          <HiOutlineLogin className="h-10 w-10 text-blue-600 mb-2" />
-          <h2 className="text-3xl font-extrabold text-gray-900">
+          <HiOutlineLogin className="h-12 w-12 text-[var(--color-accent)] mb-2 animate-bounce" />
+          <h2 className="text-3xl font-extrabold text-[var(--color-text)]">
             Login to RavenT
           </h2>
         </div>
+
         {error && (
-          <div className="mb-4 text-sm text-red-600 text-center">
+          <div className="mb-4 px-4 py-2 bg-red-100 border border-red-400 text-red-700 rounded text-center">
             {error}
           </div>
         )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Username
-            </label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-shadow hover:shadow-md"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-shadow hover:shadow-md"
-            />
-          </div>
+          {[
+            { id: "username", label: "Username", type: "text", value: username, setter: setUsername, required: true },
+            { id: "password", label: "Password", type: "password", value: password, setter: setPassword, required: true }
+          ].map(({ id, label, type, value, setter, required }) => (
+            <div key={id}>
+              <label htmlFor={id} className="block text-sm font-medium mb-1">
+                {label}
+              </label>
+              <input
+                id={id}
+                type={type}
+                value={value}
+                onChange={(e) => setter(e.target.value)}
+                required={required}
+                className="w-full px-4 py-2 border border-[var(--color-secondary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent shadow-sm transition-shadow hover:shadow-md"
+              />
+            </div>
+          ))}
+
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 transition-shadow shadow-md hover:shadow-xl transform hover:-translate-y-0.5 ${
-              loading ? "opacity-60 cursor-not-allowed" : ""
-            }`}
+            className={`w-full
+              bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90
+              text-white font-medium rounded-lg px-4 py-2
+              focus:ring-2 focus:ring-[var(--color-accent)] focus:outline-none
+              shadow-lg hover:shadow-2xl
+              transition-transform transition-shadow duration-300
+              transform hover:-translate-y-0.5
+              ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
           >
             {loading ? "Logging in…" : "Login"}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <Link href="/register" className="text-blue-600 hover:underline">
+
+        <p className="mt-6 text-center text-sm">
+          Don’t have an account?{' '}
+          <Link href="/register" className="text-[var(--color-accent)] hover:underline">
             Register
           </Link>
         </p>

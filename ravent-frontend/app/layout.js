@@ -9,7 +9,6 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -22,23 +21,36 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`
+          ${geistSans.variable} ${geistMono.variable}
+          antialiased
+          bg-[var(--color-bg)] text-[var(--color-text)]
+          flex flex-col min-h-screen
+        `}
       >
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
+        {/* fixed navbar with backdrop blur */}
+        <Navbar className="fixed top-0 left-0 w-full z-50
+                           bg-white/80 backdrop-blur-md shadow-md" />
 
-          {/* 
-            Add pt-16 so the main content starts below the 4rem‐high navbar 
-            Add pb-8 so there's breathing room above the footer
-          */}
-          <main className="mt-8">
-            {children}
-          </main>
+        <main
+          className="
+            flex-1
+            mt-16
+            container mx-auto
+            px-4 sm:px-6 lg:px-8
+            py-8
+            animate-fadeIn
+          "
+        >
+          {children}
+        </main>
 
-          <Footer />
-        </div>
+        {/* footer “sticks” below content */}
+        <Footer className="mt-auto
+                           bg-white/80
+                           shadow-inner" />
       </body>
     </html>
   );
